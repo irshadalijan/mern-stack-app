@@ -1,5 +1,5 @@
 # MERN STACK APP
 
-## Basic CRUD App
+### Basic CRUD App
 
-## Authentication included for email password mongoDB atlas and also Google Login implemented
+### Authentication included for email password mongoDB atlas and also Google Login implemented

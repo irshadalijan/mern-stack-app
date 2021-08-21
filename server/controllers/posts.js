@@ -1,17 +1,76 @@
 import postMessage from "../models/postMessage.js";
 import Mongoose from "mongoose";
 
-//getPost start
+//getPosts start
 export const getPosts = async (req, res) => {
+  const { page } = req.query;
   try {
-    const postMessages = await postMessage.find();
+    const LIMIT = 8;
+    const currPage = Number(page);
+    const startIndex = (currPage - 1) * LIMIT; //get starting index of every page
+    const total = await postMessage.countDocuments({});
+    const posts = await postMessage
+      .find()
+      .sort({ _id: -1 })
+      .limit(LIMIT)
+      .skip(startIndex);
 
-    res.status(200).json(postMessages);
+    res.status(200).json({
+      data: posts,
+      currentPage: currPage,
+      numberOfPages: Math.ceil(total / LIMIT),
+    });
   } catch (error) {
     res.status(404).json({ message: error.message, error: error });
   }
 };
-//getPost end
+//getPosts end
+
+//getPost Start
+export const getPost = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const post = await postMessage.findById(id);
+
+    res.status(200).json(post);
+  } catch (error) {
+    res.status(404).json({ message: error.message });
+  }
+};
+//getPost End
+
+//getPostsBySearch start
+// export const getPostsBySearch = async (req, res) => {
+//   const { searchQuery, tags } = req.query;
+//   try {
+//     const title = new RegExp(searchQuery, "i");
+//     const posts = await postMessage.find({
+//       $or: [{ title }, { tags: { $in: tags.split(",") } }],
+//     });
+
+//     res.status(200).json(posts);
+//   } catch (error) {
+//     res.status(404).json({ message: error.message, error: error });
+//   }
+// };
+
+export const getPostsBySearch = async (req, res) => {
+  const { searchQuery, tags } = req.query;
+
+  try {
+    const title = new RegExp(searchQuery, "i");
+
+    const posts = await postMessage.find({
+      $or: [{ title }, { tags: { $in: tags.split(",") } }],
+    });
+
+    res.json({ data: posts });
+  } catch (error) {
+    res.status(404).json({ message: error.message });
+  }
+};
+//getPostsBySearch end
 
 //createPost start
 export const createPost = async (req, res) => {
