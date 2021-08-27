@@ -156,3 +156,19 @@ export const likePost = async (req, res) => {
   }
 };
 //likePost end
+
+//add comment to post start
+export const commentPost = async (req, res) => {
+  const { id } = req.params;
+  const { value } = req.body;
+
+  const post = await postMessage.findById(id);
+  post.comments.push(value);
+
+  const updatedPost = await postMessage.findByIdAndUpdate(id, post, {
+    new: true,
+  });
+
+  res.json(updatedPost);
+};
+//add comment to post end

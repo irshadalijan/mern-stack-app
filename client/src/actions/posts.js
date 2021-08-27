@@ -9,6 +9,7 @@ import {
   START_LOADING,
   END_LOADING,
   DELETE,
+  COMMENT,
 } from "../constants/actionTypes";
 //Action creators
 
@@ -94,6 +95,18 @@ export const likePost = (id) => async (dispatch) => {
     const { data } = await api.likePost(id);
     const action = { type: LIKE, payload: data };
     dispatch(action);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const commentPost = (value, id) => async (dispatch) => {
+  try {
+    const { data } = await api.comment(value, id);
+
+    dispatch({ type: COMMENT, payload: data });
+
+    return data.comments;
   } catch (error) {
     console.log(error);
   }
